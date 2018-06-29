@@ -1,46 +1,78 @@
 /*
- * https://github.com/chauhannaman98/Using-4-4-Keypad-With-Arduino
+ * https://github.com/chauhannaman98/Arduino-Car-Parking-Assistant
  *
  * Source_Code.ino
  *
- * Created: July 29,2017
+ * August 18, 2017 © GPL3+
  * Author : Naman Chauhan
- */
+ * 
+ ********************************************************************************
+ *  
+ * This sketch reads a HC-SR04 ultrasonic rangefinder and returns the
+ * distance to the closest object in range. To do this, it sends a pulse
+ * to the sensor to initiate a reading, then listens for a pulse 
+ * to return.  The length of the returning pulse is proportional to 
+ * the distance of the object from the sensor.
+ *   
+ * The circuit:
+ * * VCC connection of the sensor attached to +5V
+ * * GND connection of the sensor attached to ground
+ * * TRIG connection of the sensor attached to digital pin 13
+ * * ECHO connection of the sensor attached to digital pin 11
+    
+********************************************************************************/
 
-#include <Keypad.h>
+#include <OneSheeld.h>
 
-const byte numRows= 4; //number of rows on the keypad
-const byte numCols= 4; //number of columns on the keypad
+#define CUSTOM_SETTINGS
+#define INCLUDE_TEXT_TO_SPEECH_SHIELD
 
-/*keymap defines the key pressed according to the row and columns just as appears on the keypad*/
-char keymap[numRows][numCols]=
+char charValue[4];  //charVal variable stores the words which are to be spoken
+
+
+void setup() 
 {
-{'1', '2', '3', 'A'},
-{'4', '5', '6', 'B'},
-{'7', '8', '9', 'C'},
-{'*', '0', '#', 'D'}
-};
-
-//Code that shows the the keypad connections to the arduino terminals
-byte rowPins[numRows] = {'9','8','7','6'}; //Rows 0 to 3
-byte colPins[numCols]= {'5','4','3','2'}; //Columns 0 to 3
-
-//initializes an instance of the Keypad class
-Keypad myKeypad= Keypad(makeKeymap(keymap), rowPins, colPins, numRows, numCols);
-
-void setup()
-{
-  Serial.begin(9600);
+  OneSheeld.begin();    //starts the 1Sheeld
 }
 
-//If key is pressed, this key is stored in keypressed variable
-//If key is not equal to NO_KEY, then this key is printed out
-//if count=17, then count is reset back to 0 (this means no key is pressed during the whole keypad scan process
-void loop()
+void loop() 
 {
-  char keypressed = myKeypad.getKey();
-  if (keypressed != NO_KEY)
+  int trigPin = 13;     //trigger pin connected to 
+  int echoPin = 11;
+  
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  
+  long duration, cm;
+  
+  // Read the signal from the sensor: a HIGH pulse whose
+  // duration is the time (in microseconds) from the sending
+  // of the ping to the reception of its echo off of an object.
+  duration = pulseIn(echoPin, HIGH);
+  
+  // convert the time into a distance
+  cm = duration / 29 / 2;
+
+  dtostrf(cm, 4, 1, charValue);
+  if (cm < 70)
     {
-      Serial.println(keypressed);
+      TextToSpeech.say("Stop! Your are too close! Distance is ");
+      delay(3500);
+      TextToSpeech.say(charValue);
+      delay(1300);
+    }
+  else if (cm > 70 && cm < 170)
+    {
+      TextToSpeech.say("Keep it slow! Distance is ");
+      delay(3500);
+      TextToSpeech.say(charValue);
+      delay(1300);
+    }
+  else if (cm > 170)
+    {
+      TextToSpeech.say("Distance is ");
+      delay(1500);
+      TextToSpeech.say(charValue);
+      delay(1300);
     }
 }
