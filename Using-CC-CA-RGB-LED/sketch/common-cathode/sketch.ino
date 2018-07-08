@@ -1,9 +1,9 @@
 /*
  * https://github.com/chauhannaman98/Arduino-Car-Parking-Assistant
  *
- * Source_Code.ino
+ * sketch.ino
  *
- * August 18, 2017 © GPL3+
+ * July 8, 2018 © GPL3+
  * Author : Naman Chauhan
  *
  * NOTE: New model RGB leds have green and blue leads interchanged. Please refer     
