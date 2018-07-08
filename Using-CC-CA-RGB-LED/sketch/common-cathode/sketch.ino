@@ -5,13 +5,13 @@
  *
  * August 18, 2017 © GPL3+
  * Author : Naman Chauhan
+ *
+ * NOTE: New model RGB leds have green and blue leads interchanged. Please refer     
+ * to the datasheet of the correspoding led model from the seller's site.
     
-    NOTE: New model RGB leds have green and blue leads interchanged. Please refer     to the datasheet of the correspoding led model from the seller's site.
+ * Use the Serial Monitor to enter the values for each color component out of 255.
     
-    Use the Serial Monitor to enter the values for each color component out of 
-    255.
-    
-***/
+**********************************************************************************/
 
 /***declaring RGB pins in PWM mode***/
 int red = 11;
