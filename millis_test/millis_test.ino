@@ -1,5 +1,6 @@
 const int n = 2;    //number of variables
 
+//15 sec for 1 & 10 second for 2
 unsigned long Dx_ON[2] = {15000, 10000};
 unsigned long Ex_ON[2] = {0, 0};
 
