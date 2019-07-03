@@ -1,46 +1,63 @@
-unsigned long Dx_ON= 15000;
-unsigned long Ex_ON= 0;
+unsigned long Dx_ON[2] = {15000, 10000};
+unsigned long Ex_ON[2] = {0, 0};
 
-boolean exFlag = true;
+boolean exFlag[2] = {true, true};
 
 void setup() {
-  // put your setup code here, to run once:
+  
   Serial.begin(9600);
+  
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-    
 
-    if(Ex_ON < Dx_ON && exFlag == true){
+    //Starting elapsed time for both variables
+    for(int i = 0; i<2; i++)  {
       
-      record_Ex_ON(exFlag);
-      Serial.print("     E1_ON = ");
-      Serial.print(Ex_ON);
-      Serial.print("     D1_ON: ");
-      Serial.println(Dx_ON);
-    
-    }
-    
-    if(Ex_ON >= Dx_ON) {
-      Serial.print("Calling stop function");
-      stop_Ex_ON();
-  }
+      if(Ex_ON[i] < Dx_ON[i] && exFlag[i] == true)  {
+        record_Ex_ON(i);     
+     }
+   }
+
+   //Checking stop condition for both variables
+   for(int i = 0; i<2; i++)  {
+
+     if(Ex_ON[i] >= Dx_ON[i]) {
+        Serial.print("\n*****Calling stop function for ");
+        Serial.print(i+1);
+        Serial.println("*****");
+        stop_Ex_ON(i);
+     }
+   }
+
+   unsigned long currentMillis = millis();
+   Serial.print("   |   Millis = ");
+   Serial.println(currentMillis);
 }
 
-void record_Ex_ON(boolean flag) {
 
-    Ex_ON = millis();
-    Serial.print("Calling record function");
 
+// user-defined functions here:
+void record_Ex_ON(int i) {
+
+    Ex_ON[i] = millis();
+    Serial.print("   |   Calling record function for ");
+    Serial.print(i+1);
+    Serial.print("     E");
+    Serial.print(i+1);
+    Serial.print("_ON = ");
+    Serial.print(Ex_ON[i]);
+    
 }
 
-void stop_Ex_ON()  {
+void stop_Ex_ON(int i)  {
 
   //save elapsedTime to EEPROM first
   //ENTER EEPROM CODE HERE:
-  Ex_ON = 0;
-  exFlag = false;
-  Serial.println("     Stopped E1_ON");
+  Ex_ON[i] = 0;
+  exFlag[i] = false;
+  Serial.println("     Stopped E");
+  Serial.print(i+1);
+  Serial.print("_ON = ");
   
 }
