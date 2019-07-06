@@ -158,10 +158,11 @@ void EEPROMWrite(int address, unsigned long value) {
     byte two = ((value >> 16) & 0xFF);
     byte one = ((value >> 24) & 0xFF);
     
-    EEPROM.write(address, four);
-    EEPROM.write(address + 1, three);
-    EEPROM.write(address + 2, two);
-    EEPROM.write(address + 3, one);
+    EEPROM.put(address, four);
+    EEPROM.put(address + 1, three);
+    EEPROM.put(address + 2, two);
+    EEPROM.put(address + 3, one);
+    EEPROM.commit();
 }
 
 //function to read from EEPROM
