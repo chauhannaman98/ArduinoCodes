@@ -120,11 +120,16 @@ void EEPROMWrite(int address, unsigned long value) {
 }
 
 //function to read from EEPROM
-long EEPROMRead(long address) {
-    long four = EEPROM.read(address);
-    long three = EEPROM.read(address + 1);
-    long two = EEPROM.read(address + 2);
-    long one = EEPROM.read(address + 3);
+unsigned long EEPROMRead(long address) {
+    unsigned long four = EEPROM.read(address);
+    unsigned long three = EEPROM.read(address + 1);
+    unsigned long two = EEPROM.read(address + 2);
+    unsigned long one = EEPROM.read(address + 3);
 
-    return ((four << 0) & 0xFF) + ((three << 8) & 0xFFFF) + ((two << 16) & 0xFFFFFF) + ((one << 24) & 0xFFFFFFFF);
+    return (
+      ((four << 0) & 0xFF) + 
+      ((three << 8) & 0xFFFF) + 
+      ((two << 16) & 0xFFFFFF) + 
+      ((one << 24) & 0xFFFFFFFF)
+    );
 }
