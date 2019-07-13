@@ -1,6 +1,7 @@
 #include <EEPROM.h>
 
 const int n = 2;    //number of variables
+const int pin[2] = {3, 4};
 
 boolean Appln_State[2] = {true, true};
 
@@ -21,34 +22,34 @@ void setup() {
   
       Serial.begin(9600);
       EEPROM.begin(64);   // Initialising array of size 64 bytes in RAM to represent the 64 bytes in Flash as EEPROM
-  
+      
       //Reading elapsed time from EEPROM
       for(int i = 0; i<n; i++)  {
          if(i==0)
-            address = 0; 
+            address = 0;
          if(i==1)
             address = 5;
         Ex_ON[i] = EEPROMRead(address);               //Reading elapsed time from EEPROM
         Dx_ON[i] = EEPROMRead(address+10);        //Reading duration time from EEPROM
-        Appln_State[i] = EEPROMRead(address)+20;       //Reading state from EEPROM
+        Appln_State[i] = EEPROMRead(address+20);       //Reading state from EEPROM
+        Ex_Start[i] = EEPROMRead(address+30);       //Reading start time from EEPROM
       }
 }
 
 void loop() {
-
-     trigger(0);
-    
-      //Starting elapsed time for both variables
+      
       for(int i = 0; i<n; i++)  {
-        
+
+          if(trigFlag[i]) {
+            trigger(i);
+          }
+
+          //checking for starting appliances
           if(Ex_ON[i] < Dx_ON[i] && rFlag[i])  {
             record_Ex_ON(i);
          }
-     }
-  
-     //Checking stop condition for both variables
-     for(int i = 0; i<n; i++)  {
-  
+
+         //checking for stoping any appliance
          if(Ex_ON[i] >= Dx_ON[i]) {
               Serial.print("\n*****Calling stop function for ");
               Serial.print(i+1);
@@ -59,7 +60,7 @@ void loop() {
 } //loop
 
 
-// user-defined functions here:
+            /****------user-defined functions here-----****/
 //function for recording elapsed time
 void record_Ex_ON(int i) {
 
@@ -69,7 +70,10 @@ void record_Ex_ON(int i) {
         address = 0;        //saving Ex_ON of 1 on 0 location
       if(i==1)
         address = 5;     //saving Ex_ON of 2 on 5 location
+      Appln_State[i] = true;
       EEPROMWrite(address, Ex_ON[i]);
+      
+      // Serial for debugging only
       Serial.print(" | Calling record function for ");
       Serial.print(i+1);
       Serial.print(" | E");
@@ -81,11 +85,13 @@ void record_Ex_ON(int i) {
 //function for stopping elapsed time
 void stop_Ex_ON(int i)  {
 
+      digitalWrite(pin[i], LOW);
+      Appln_State[i] = false;
       Ex_ON[i] = 0;
       if(i==0)
           address = 0;        //saving Ex_ON of 1 on 0 location
       if(i==1)
-          address = 5;     //saving Ex_ON of 2 on 55 location
+          address = 5;     //saving Ex_ON of 2 on 5 location
       EEPROMWrite(address, Ex_ON[i]);
       Ex_Start[i] = 0;
       rFlag[i] = false;
@@ -98,11 +104,13 @@ void stop_Ex_ON(int i)  {
 //function to trigger
 void trigger(int i) {
 
-        if(trigFlag[i]) {
         Ex_Start[i] = millis();
-        trigFlag[i] = false;    //false to prevent trigger again
-        rFlag[i] = true;
+        Appln_State[i] = true;
+        if(Appln_State[i])  {
+            digitalWrite(pin[i], HIGH);
         }
+        rFlag[i] = true;
+        trigFlag[i] = false;
 }
 
 //function to write to EEPROM
