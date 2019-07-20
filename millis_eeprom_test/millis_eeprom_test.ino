@@ -17,6 +17,8 @@ boolean rFlag[2] = {false, false};       //flag to  record of Ex_ON
 boolean trigFlag[2] = {true, true};     //flag to trigger  Ex_ON
 
 int address;
+unsigned long start_time=0;
+int min_count=0;
 
 void setup() {
   
@@ -37,6 +39,11 @@ void setup() {
 }
 
 void loop() {
+
+      if (millis()-start_time>=6000)  {
+          min_count+=1;
+          start_time=millis();
+      }
       
       for(int i = 0; i<n; i++)  {
 
