@@ -25,7 +25,7 @@ void setup() {
       Serial.begin(9600);
       EEPROM.begin(64);   // Initialising array of size 64 bytes in RAM to represent the 64 bytes in Flash as EEPROM
       
-      //Reading elapsed time from EEPROM
+      //Reading saved data from EEPROM
       for(int i = 0; i<n; i++)  {
          if(i==0)
             address = 0;
@@ -40,10 +40,10 @@ void setup() {
 
 void loop() {
 
-      if (millis()-start_time>=6000)  {
+      /*if (millis()-start_time>=6000)  {
           min_count+=1;
           start_time=millis();
-      }
+      }*/
       
       for(int i = 0; i<n; i++)  {
 
@@ -92,7 +92,7 @@ void record_Ex_ON(int i) {
 //function for stopping elapsed time
 void stop_Ex_ON(int i)  {
 
-      digitalWrite(pin[i], LOW);
+      digitalWrite(pin[i], LOW);      // switch OFF the pin
       Appln_State[i] = false;
       Ex_ON[i] = 0;
       if(i==0)
@@ -114,7 +114,7 @@ void trigger(int i) {
         Ex_Start[i] = millis();
         Appln_State[i] = true;
         if(Appln_State[i])  {
-            digitalWrite(pin[i], HIGH);
+            digitalWrite(pin[i], HIGH);       //switch ON the pin
         }
         rFlag[i] = true;
         trigFlag[i] = false;
@@ -159,4 +159,11 @@ unsigned long EEPROMRead(int address) {
           ((two << 16) & 0xFFFFFF) + 
           ((one << 24) & 0xFFFFFFFF)
       );
+}
+
+// function to convert minutes recieved from server to milliseconds
+// 1 min = 60 sec and 1 sec = 1000 millisec
+// thus, 1 min = 60000 millis
+unsigned long min_to_millis(int mins) {
+      return (mins*60000);
 }
