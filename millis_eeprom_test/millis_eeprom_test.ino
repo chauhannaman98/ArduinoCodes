@@ -41,13 +41,12 @@ void setup() {
 }
 
 void loop() {
-
-      /*if (millis()-start_time>=6000)  {
-          min_count+=1;
-          start_time=millis();
-      }*/
       
       for(int i = 0; i<n; i++)  {
+          if(i==0)
+            address = 0;
+          if(i==1)
+            address = 5;
 
           if(trigFlag[i]) {
             trigger(i);
@@ -56,7 +55,7 @@ void loop() {
           //checking for starting appliances
           if(Ex_ON[i] < Dx_ON[i] && rFlag[i])  {
             record_Ex_ON(i);
-         }
+          }
 
          //checking for stoping any appliance
          if(Ex_ON[i] >= Dx_ON[i]) {
@@ -81,6 +80,7 @@ void record_Ex_ON(int i) {
         address = 5;     //saving Ex_ON of 2 on 5 location
       Appln_State[i] = true;
       EEPROMWrite(address, Ex_ON[i]);
+      EEPROMWrite(address+20, Appln_State[i]);
       
       // Serial for debugging only
       Serial.print(" | Calling record function for ");
@@ -96,6 +96,7 @@ void stop_Ex_ON(int i)  {
 
       digitalWrite(pin[i], LOW);      // switch OFF the pin
       Appln_State[i] = false;
+      EEPROMWrite(address+20, Appln_State[i]);
       Ex_ON[i] = 0;
       if(i==0)
           address = 0;        //saving Ex_ON of 1 on 0 location
@@ -122,7 +123,7 @@ void trigger(int i) {
         trigFlag[i] = false;
 }
 
-//function to write to EEPROM
+//function to write unsigned long value to EEPROM
 void EEPROMWrite(int address, unsigned long value) {
 
     /* size of unsigned long is 32 bytes but each memory location in EEPROM
@@ -138,6 +139,12 @@ void EEPROMWrite(int address, unsigned long value) {
     EEPROM.put(address + 1, three);
     EEPROM.put(address + 2, two);
     EEPROM.put(address + 3, one);
+    EEPROM.commit();
+}
+
+//overidden function to write boolean value to EEPROM
+void EEPROMWrite(int address, boolean value) {
+    EEPROM.put(address, value);
     EEPROM.commit();
 }
 
