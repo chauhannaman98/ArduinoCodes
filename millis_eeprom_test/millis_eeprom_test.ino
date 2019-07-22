@@ -27,6 +27,8 @@ void setup() {
       
       //Reading saved data from EEPROM
       for(int i = 0; i<n; i++)  {
+        pinMode(pin[i], OUTPUT);
+        
          if(i==0)
             address = 0;
          if(i==1)
