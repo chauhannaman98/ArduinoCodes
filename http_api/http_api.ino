@@ -3,8 +3,8 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>        // install v5.13.5
 
-const char* ssid = "Techmirtz";
-const char* password = "srmmmmmm";
+const char* ssid = "******";
+const char* password = "*****";
 
 /*Web server address to read/wite from*/
 const char* URL = "http://arduinojson.org/example.json";
