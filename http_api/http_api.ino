@@ -3,11 +3,11 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>        // install v5.13.5
 
-const char* ssid = "*****";
-const char* password = "*****";
+const char* ssid = "Techmirtz";
+const char* password = "srmmmmmm";
 
 /*Web server address to read/wite from*/
-const char* URL = "https://raw.githubusercontent.com/chauhannaman98/jsonAPI-test/master/data.json";
+const char* URL = "https://api.jsonbin.io/b/5d39f39ecf54f14fc94df8dc";
 
 void setup() {
       Serial.begin(115200);

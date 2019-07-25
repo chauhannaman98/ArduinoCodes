@@ -8,7 +8,7 @@ const char* ssid = "******";
 const char* password = "*****";
 
 /*Web server address to read/wite from*/
-const char* URL = "http://arduinojson.org/example.json";
+const char* URL = "https://raw.githubusercontent.com/chauhannaman98/jsonAPI-test/master/data.json";
 
 const int n = 2;    //number of variables
 const int pin[2] = {3, 4};    //pins connected to relay
@@ -28,6 +28,12 @@ boolean trigFlag[2] = {true, true};     //flag to trigger  Ex_ON
 int address;
 unsigned long start_time=0;
 int min_count=0;
+
+/*variables to store data from the server*/
+boolean State1;
+boolean State2;
+unsigned long D1_ON;
+unsigned long D2_ON;
 
 void setup() {
   
@@ -69,6 +75,8 @@ void setup() {
 }
 
 void loop() {
+
+      getData();
       
       for(int i = 0; i<n; i++)  {
           if(i==0)
@@ -170,7 +178,7 @@ void EEPROMWrite(int address, unsigned long value) {
     EEPROM.commit();
 }
 
-//overidden function to write boolean value to EEPROM
+//overloaded function to write boolean value to EEPROM
 void EEPROMWrite(int address, boolean value) {
     EEPROM.put(address, value);
     EEPROM.commit();
@@ -206,7 +214,7 @@ unsigned long min_to_millis(int mins) {
 }
 
 // function to send HTTP request for getting the JSON data from the server
-void startServer()   {
+void getData()   {
       HTTPClient http;    //Declare object of class HTTPClient
     
       Serial.print("API URL: ");
@@ -216,14 +224,14 @@ void startServer()   {
       
       int httpCode = http.GET();            //Send the request
       String payload = http.getString();    //Get the response payload from server
-    
-      Serial.print("Response Code:"); //200 is OK
-      Serial.println(httpCode);   //Print HTTP return code
-    
-      Serial.print("Data from Server:");
-      Serial.println(payload);    //Print request response payload
 
-      if(httpCode == 200)      {
+      /*Serial.print("Response Code:"); //200 is OK
+      Serial.println(httpCode);   //Print HTTP return code*/
+
+      /*Serial.print("Data from Server:");
+      Serial.println(payload);    //Print request response payload*/
+
+      if(httpCode > 0)      {
               // Allocate JsonBuffer
               // Use https://www.arduinojson.org/assistant to compute the capacity.
               const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
@@ -237,12 +245,28 @@ void startServer()   {
               }
       
       // Decode JSON/Extract values
+      State1 = root["Appln1_State"];
+      State2 = root["Appln2_State"];
+      D1_ON = root["D1_ON"];
+      D2_ON = root["D2_ON"];
+
+      // Print extracted values to serial monitor
       Serial.println("");
-      Serial.println(F("Response: "));
-      Serial.println(root["sensor"].as<char*>());
-      Serial.println(root["time"].as<char*>());
-      Serial.println(root["data"][0].as<char*>());
-      Serial.println(root["data"][1].as<char*>());
+      Serial.println("Response: ");
+      Serial.print("Appln1_State = ");
+      Serial.println(State1);
+      Serial.print("Appln2_State = ");
+      Serial.println(State2);
+      Serial.print("D1_ON = ");
+      Serial.println(D1_ON);
+      Serial.print("D2_ON = ");
+      Serial.println(D2_ON);
+
+      // Storing data to the local stored variables
+      trigFlag[0] = State1;
+      trigFlag[1] = State2;
+      Dx_ON[0] = D1_ON;
+      Dx_ON[1] = D2_ON;
       }
       else      {
         Serial.println("Error in response");
