@@ -3,11 +3,11 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>        // install v5.13.5
 
-const char* ssid = "******";
+const char* ssid = "*****";
 const char* password = "*****";
 
 /*Web server address to read/wite from*/
-const char* URL = "http://arduinojson.org/example.json";
+const char* URL = "https://raw.githubusercontent.com/chauhannaman98/jsonAPI-test/master/data.json";
 
 void setup() {
       Serial.begin(115200);
@@ -51,7 +51,7 @@ void loop() {
       if(httpCode == 200)      {
               // Allocate JsonBuffer
               // Use https://www.arduinojson.org/assistant to compute the capacity.
-              const size_t capacity = JSON_OBJECT_SIZE(3) + JSON_ARRAY_SIZE(2) + 60;
+              const size_t capacity = JSON_OBJECT_SIZE(4) + 71;
               DynamicJsonBuffer jsonBuffer(capacity);
             
              // Parse JSON object
@@ -60,14 +60,24 @@ void loop() {
                     Serial.println(F("Parsing failed!"));
                     return;
               }
-            
+     
       // Decode JSON/Extract values
+      const boolean State1 = root["Appln1_State"];
+      const boolean State2 = root["Appln2_State"];
+      unsigned long D1_ON = root["D1_ON"];
+      unsigned long D2_ON = root["D2_ON"];
+
+      // Print extracted values to serial monitor
       Serial.println("");
-      Serial.println(F("Response: "));
-      Serial.println(root["sensor"].as<char*>());
-      Serial.println(root["time"].as<char*>());
-      Serial.println(root["data"][0].as<char*>());
-      Serial.println(root["data"][1].as<char*>());
+      Serial.println("Response: ");
+      Serial.print("Appln1_State = ");
+      Serial.println(State1);
+      Serial.print("Appln2_State = ");
+      Serial.println(State2);
+      Serial.print("D1_ON = ");
+      Serial.println(D1_ON);
+      Serial.print("D2_ON = ");
+      Serial.println(D2_ON);
       }
       else      {
         Serial.println("Error in response");
@@ -75,5 +85,5 @@ void loop() {
     
       http.end();  //Close connection
       
-      delay(5000);  //GET Data at every 5 seconds
+      delay(30000);  //GET Data at every 5 seconds
 }
