@@ -38,60 +38,58 @@ void loop() {
   servov = servoverti.read();
 
   //capturing analog values of each LDR
-int topl = analogRead(ldrtopl);
-int topr = analogRead(ldrtopr);
-int botl = analogRead(ldrbotl);
-int botr = analogRead(ldrbotr);
-// calculating average
-int avgtop = (topl + topr) / 2; //average of top LDRs
-int avgbot = (botl + botr) / 2; //average of bottom LDRs
-int avgleft = (topl + botl) / 2; //average of left LDRs
-int avgright = (topr + botr) / 2; //average of right LDRs
+  int topl = analogRead(ldrtopl);
+  int topr = analogRead(ldrtopr);
+  int botl = analogRead(ldrbotl);
+  int botr = analogRead(ldrbotr);
+  // calculating average
+  int avgtop = (topl + topr) / 2; //average of top LDRs
+  int avgbot = (botl + botr) / 2; //average of bottom LDRs
+  int avgleft = (topl + botl) / 2; //average of left LDRs
+  int avgright = (topr + botr) / 2; //average of right LDRs
 
-if (avgtop < avgbot)
-{
-  servoverti.write(servov +1);
-  if (servov > servovLimitHigh)
-   {
-    servov = servovLimitHigh;
-   }
-  delay(10);
-}
-else if (avgbot < avgtop)
-{
-  servoverti.write(servov -1);
-  if (servov < servovLimitLow)
-{
-  servov = servovLimitLow;
-}
-  delay(10);
-}
-else
-{
-  servoverti.write(servov);
-}
-
-if (avgleft > avgright)
-{
-  servohori.write(servoh +1);
-  if (servoh > servohLimitHigh)
-  {
-  servoh = servohLimitHigh;
+  if (avgtop < avgbot)  {
+    servoverti.write(servov +1);
+    if (servov > servovLimitHigh) {
+      servov = servovLimitHigh;
+     }
+    delay(10);
   }
+  else if (avgbot < avgtop) {
+          servoverti.write(servov -1);
+          if (servov < servovLimitLow)  {
+            servov = servovLimitLow;
+          }
+       delay(10);
+       }
+       else {
+          servoverti.write(servov);
+       }
+
+  if (avgleft > avgright) {
+    servohori.write(servoh +1);
+    if (servoh > servohLimitHigh) {
+      servoh = servohLimitHigh;
+    }
+    delay(10);
+  }
+  else if (avgright > avgleft)  {
+    servohori.write(servoh -1);
+    if (servoh < servohLimitLow)  {
+      servoh = servohLimitLow;
+    }
   delay(10);
-}
-else if (avgright > avgleft)
-{
-  servohori.write(servoh -1);
-  if (servoh < servohLimitLow)
-   {
-   servoh = servohLimitLow;
-   }
-  delay(10);
-}
-else
-{
-  servohori.write(servoh);
-}
-delay(50)
+  }
+  else  {
+    servohori.write(servoh);
+  }
+  
+  delay(50)
+  
+  for(int i=0; i<23; i++) { // looping sleep of 8 seconds 23 times.
+    // 8 x 23 = 3 minutes approx
+  LowPower.idle(SLEEP_2S, ADC_OFF, BOD_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
+                SPI_OFF, USART0_OFF, TWI_OFF);    // Goes to sleep for 8 seconds
+  }
+  
 }
