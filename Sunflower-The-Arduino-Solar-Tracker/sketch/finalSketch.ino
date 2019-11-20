@@ -7,7 +7,8 @@
  * Author : Naman Chauhan
  */
 
-#include<Servo.h>
+#include <Servo.h>
+#include <LowPower.h>
 
 Servo servohori;
 int servoh = 0;
