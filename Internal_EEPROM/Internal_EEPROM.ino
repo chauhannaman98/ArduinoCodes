@@ -23,7 +23,7 @@ bool writeData(int bigData, int address)  {
   return true;
 }
 
-/*
+/* OVERLOADED FUNCTION
  function: writes data to EEPROM in little endian order
  params: bigData(long, data to be written),
       address(int, starting address)
@@ -39,6 +39,46 @@ bool writeData(long bigData, int address)  {
     EEPROM.write(address+i, littleData);
   }
   return true;
+}
+
+/* OVERLOADED FUNCTION
+ function: writes data to EEPROM in little endian order
+ params: bigData(unsigned long, data to be written),
+      address(int, starting address)
+*/
+bool writeData(unsigned long bigData, int address)  {
+  byte littleData;
+  int len = sizeof(bigData);
+  int byteSize = 8;
+  littleData = bigData & 0xFF;
+  EEPROM.write(address, littleData);  //1st byte written
+  for(int i = 1; i<len; i++)  {       //loops to write other bytes
+    littleData = (bigData >> i*byteSize);
+    EEPROM.write(address+i, littleData);
+  }
+  return true;
+}
+
+/* OVERLOADED FUNCTION
+ function: writes data to EEPROM in little endian order
+ params: bigData(long long, data to be written),
+      address(int, starting address)
+*/
+bool writeData(long long bigData, int address)  {
+  byte littleData;
+  int len = sizeof(bigData);
+  int byteSize = 8;
+  littleData = bigData & 0xFF;
+  EEPROM.write(address, littleData);  //1st byte written
+  for(int i = 1; i<len; i++)  {       //loops to write other bytes
+    littleData = (bigData >> i*byteSize);
+    EEPROM.write(address+i, littleData);
+  }
+  return true;
+}
+
+void readInt(int address) {
+  //todo
 }
 
 void write_() {
@@ -57,6 +97,32 @@ void write_() {
   }
 }
 
+void read_()  {
+  int ch;
+  Serial.println("\n1)int \n2)long \n3)unsigned long \n4)long long");
+  Serial.print("Enter the datatype: ");
+  while(Serial.available()==0) {}
+  ch = Serial.parseInt();
+  Serial.print("Enter the address: ");
+  while(Serial.available()==0) {}
+  addr = Serial.parseInt();
+  Serial.println(addr);
+  Serial.print("Data stored at ");
+  Serial.print(addr);
+  Serial.print(" is: ");
+  switch(ch)  {
+    case 1: //Serial.println(readInt(addr), DEC);
+            break;
+    case 2: //Serial.println(readlong(addr), DEC);
+            break;
+    case 3: //Serial.println(readUlong(addr), DEC);
+            break;
+    case 4: //Serial.println(readLL(addr), DEC);
+            break;
+    default: Serial.println("Incorrect choice! Enter again!");
+  }
+}
+
 bool askChoice()  {
   bool flag = true;
   int ch;
@@ -68,9 +134,9 @@ bool askChoice()  {
   switch(ch)  {
     case 1: write_();
             break;
-    case 2: //read_();
+    case 2: read_();
             break;
-    default: Serial.println("Enter correct choice!");
+    default: Serial.println("Incorrect choice! Enter again");
              flag=false;
              break;
   }
