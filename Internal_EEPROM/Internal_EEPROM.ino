@@ -21,33 +21,34 @@ bool writeData(int bigData, int address)  {
   return true;
 }
 
-/*OVERLOADED FUNCTION
- function: writes data to EEPROM in little endian order
- params: bigData(float, data to be written),
-     address(int, starting address)
-*/
-bool writeData(float bigData, int address)  {
-  byte littleData;
-  //masking bigData for 8-LSBs
-  littleData = bigData & 0xFF;
-  EEPROM.write(address++, littleData);  //writing 1st byte
-  //right shift 8 bits for 8-MSBs
-  littleData = (bigData >> 8);
-  littleData = bigData & 0xFF;
-  EEPROM.write(address++, littleData);  //writing 2nd byte
-  littleData = (bigData >> 16);
-  littleData = bigData & 0xFF;
-  EEPROM.write(address++, littleData);  //writing 3rd byte
-  littleData = (bigData >> 24);
-  littleData = bigData & 0xFF;
-  EEPROM.write(address, littleData);  //writing 4th byte
-  return true;
+bool askChoice()  {
+  bool flag = true;
+  int ch;
+  Serial.println("1) Write\n2) Read");
+  Serial.print("Enter choice: ");
+  while(Serial.available()==0)  {}
+  ch = Serial.parseInt();
+  switch(ch)  {
+    case 1: //write_();
+            break;
+    case 2: //read_();
+            break;
+    default: Serial.println("Enter correct choice!");
+             flag=false;
+             break;
+  }
+  return flag;
 }
 
 void loop()
 {
   int data, addr;
+  bool flag = askChoice();
+  while(!flag)  {
+    flag = askChoice();
+  }
+  
   Serial.print("Enter data: ");
-  while(Seria.available()==0) {}
-  Serial.parseInt(data);
+  while(Serial.available()==0) {}
+  data = Serial.parseInt();
 }
