@@ -1,7 +1,5 @@
 #include <EEPROM.h>
 
-int data, addr;
-
 void setup()
 {
   Serial.begin(9600);
@@ -12,7 +10,7 @@ void setup()
  params: bigData(int, data to be written),
       address(int, starting address)
 */
-bool writeData(int bigData, int address)  {
+bool writeInt(int bigData, int address)  {
   byte littleData;
   //masking bigData for 8-LSBs
   littleData = bigData & 0xFF;
@@ -23,12 +21,12 @@ bool writeData(int bigData, int address)  {
   return true;
 }
 
-/* OVERLOADED FUNCTION
+/*
  function: writes data to EEPROM in little endian order
  params: bigData(long, data to be written),
       address(int, starting address)
 */
-bool writeData(long bigData, int address)  {
+bool writeLong(long bigData, int address)  {
   byte littleData;
   int len = sizeof(bigData);
   int byteSize = 8;
@@ -41,12 +39,12 @@ bool writeData(long bigData, int address)  {
   return true;
 }
 
-/* OVERLOADED FUNCTION
+/*
  function: writes data to EEPROM in little endian order
  params: bigData(unsigned long, data to be written),
       address(int, starting address)
 */
-bool writeData(unsigned long bigData, int address)  {
+bool writeUL(unsigned long bigData, int address)  {
   byte littleData;
   int len = sizeof(bigData);
   int byteSize = 8;
@@ -59,12 +57,12 @@ bool writeData(unsigned long bigData, int address)  {
   return true;
 }
 
-/* OVERLOADED FUNCTION
+/*
  function: writes data to EEPROM in little endian order
  params: bigData(long long, data to be written),
       address(int, starting address)
 */
-bool writeData(long long bigData, int address)  {
+bool writeLL(long long bigData, int address)  {
   byte littleData;
   int len = sizeof(bigData);
   int byteSize = 8;
@@ -82,23 +80,65 @@ void readInt(int address) {
 }
 
 void write_() {
-  Serial.print("Enter data: ");
+  bool flag;
+  int ch, addr;
+  Serial.println("\n1)int \n2)long \n3)unsigned long \n4)long long");
+  Serial.print("Enter the datatype: ");
   while(Serial.available()==0) {}
-  data = Serial.parseInt();
-  Serial.println(data);
+  ch = Serial.parseInt();
+  Serial.println(ch);
   Serial.print("Enter the address: ");
   while(Serial.available()==0) {}
   addr = Serial.parseInt();
   Serial.println(addr);
-  if(writeData(data, addr))  {
-    Serial.print(data);
-    Serial.print(" written successfully to address ");
-    Serial.println(addr);
+  Serial.print("Enter the data: ");
+  switch(ch)  {
+    case 1: while(Serial.available()==0) {}
+            int data = Serial.parseInt();
+            Serial.println(data);
+            flag=writeInt(data, addr);
+            if(flag)  {
+              Serial.print(data);
+              Serial.print(" written successfully to address ");
+              Serial.println(addr);
+            }
+            break;
+    case 2: while(Serial.available()==0) {}
+            long data = Serial.read();
+            Serial.println(data);
+            flag=writeLong(data, addr);
+            if(flag)  {
+              Serial.print(data);
+              Serial.print(" written successfully to address ");
+              Serial.println(addr);
+            }
+            break;
+    case 3: while(Serial.available()==0) {}
+            unsigned long data = Serial.read();
+            Serial.println(data);
+            flag=writeUL(data, addr);
+            if(flag)  {
+              Serial.print(data);
+              Serial.print(" written successfully to address ");
+              Serial.println(addr);
+            }
+            break;
+    case 4: while(Serial.available()==0) {}
+            long long data = Serial.read();
+            Serial.println(data);
+            flag=writeLL(data, addr);
+            if(flag)  {
+              Serial.print(data);
+              Serial.print(" written successfully to address ");
+              Serial.println(addr);
+            }
+            break;
+    default: Serial.println("Incorrect choice! Enter again!");
   }
 }
 
 void read_()  {
-  int ch;
+  int ch, addr;
   Serial.println("\n1)int \n2)long \n3)unsigned long \n4)long long");
   Serial.print("Enter the datatype: ");
   while(Serial.available()==0) {}
